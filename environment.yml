@@ -1,0 +1,7 @@
+name: py-codenames-ui
+channels:
+  - defaults
+dependencies:
+  - pip==22.1.2
+  - python=3.8.3
+  - pip:
