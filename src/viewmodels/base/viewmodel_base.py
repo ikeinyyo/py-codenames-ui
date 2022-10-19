@@ -1,3 +1,11 @@
+from dataclasses import dataclass
+
+from models.base import ModelBase
+
+
+@dataclass
 class ViewmodelBase:
-    def __init__(self) -> None:
-        pass
+    model: ModelBase
+
+    def __init__(self, model: ModelBase) -> None:
+        self.model = model

@@ -4,9 +4,11 @@ from viewmodels import MainViewmodel
 
 
 def main():
-    model = CodenameModel()
-    view = MainView()
-    viewmodel = MainViewmodel()
+    model = CodenameModel('es')
+    viewmodel = MainViewmodel(model)
+    view = MainView(viewmodel)
+
+    view.run()
 
 
 if __name__ == "__main__":
