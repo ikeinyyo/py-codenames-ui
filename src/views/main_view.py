@@ -1,8 +1,9 @@
-from curses import window
 from dataclasses import dataclass
-from .base import ViewBase
-from viewmodels import MainViewmodel
 from tkinter import *
+
+from viewmodels import MainViewmodel
+
+from .base import ViewBase
 
 
 @dataclass
@@ -17,6 +18,7 @@ class MainView(ViewBase):
         self.window = Tk()
         self.__initialize_window()
         self.update()
+        self.viewmodel.bind_update(self.update)
 
     def __initialize_window(self):
         self.window.title("Py-Codename")
@@ -28,6 +30,18 @@ class MainView(ViewBase):
         MainView.center(self.window)
 
     def update(self):
+        self.clear_board()
+        self.show_board()
+
+    def on_word_click(self, event):
+        self.viewmodel.on_select_word(event.widget.cget("text"))
+
+    def clear_board(self):
+        for widget in self.board_frame.winfo_children():
+            widget.destroy()
+
+    def show_board(self):
+
         for i in range(5):
             for j in range(5):
                 frame = Frame(self.board_frame, height=self.CELL_HEIGHT, width=self.CELL_WIDTH,
@@ -38,9 +52,6 @@ class MainView(ViewBase):
                     j+i) % 2 == 0 else 'yellow', font=("Arial", 25))
                 label.pack(fill=BOTH, expand=1)
                 label.bind("<1>", self.on_word_click)
-
-    def on_word_click(self, event):
-        self.viewmodel.on_select_word(event.widget.cget("text"))
 
     @staticmethod
     def center(win):
