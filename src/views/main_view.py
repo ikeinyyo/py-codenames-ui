@@ -8,8 +8,9 @@ from tkinter import *
 @dataclass
 class MainView(ViewBase):
     window: Tk
-    CELL_HEIGHT = 100
-    CELL_WIDTH = 200
+    board_frame: Frame
+    CELL_HEIGHT: int = 100
+    CELL_WIDTH: int = 200
 
     def __init__(self, viewmodel: MainViewmodel) -> None:
         super().__init__(viewmodel)
@@ -21,25 +22,25 @@ class MainView(ViewBase):
         self.window.title("Py-Codename")
         self.window.geometry(f"{self.CELL_WIDTH*5}x{self.CELL_HEIGHT*5 + 100}")
         self.window.resizable(False, False)
+        self.board_frame = Frame(
+            self.window, height=self.CELL_HEIGHT*5, width=self.CELL_WIDTH*5)
+        self.board_frame.grid(row=0, column=0)
         MainView.center(self.window)
 
     def update(self):
-        board_frame = Frame(
-            self.window, height=self.CELL_HEIGHT*5, width=self.CELL_WIDTH*5)
-        board_frame.grid(row=0, column=0)
         for i in range(5):
             for j in range(5):
-                frame = Frame(board_frame, height=self.CELL_HEIGHT, width=self.CELL_WIDTH,
+                frame = Frame(self.board_frame, height=self.CELL_HEIGHT, width=self.CELL_WIDTH,
                               bg='blue' if (j+i) % 2 == 0 else 'yellow')
                 frame.pack_propagate(False)
                 frame.grid(row=i, column=j)
                 label = Label(frame, text=self.viewmodel.words[i*5+j].upper(), background='blue' if (
                     j+i) % 2 == 0 else 'yellow', font=("Arial", 25))
                 label.pack(fill=BOTH, expand=1)
-                label.bind("<1>", self.on_sub_click)
+                label.bind("<1>", self.on_word_click)
 
-    def on_sub_click(self, event):
-        print(event.widget.cget("text"))
+    def on_word_click(self, event):
+        self.viewmodel.on_select_word(event.widget.cget("text"))
 
     @staticmethod
     def center(win):
