@@ -7,15 +7,13 @@ from typing import List
 
 @dataclass
 class Board:
-    words: List[str]
-    red: List[str]
-    blue: List[str]
-    neutral: List[str]
-    murderer: List[str]
-    selected_words: List[str]
+    words: List[dict]
 
     def __init__(self, language_code, red_goes_first) -> None:
         self.__create_board(language_code, red_goes_first)
+
+    def get_word(self, word):
+        return list(filter(lambda board_word: board_word['word'].lower() == word.lower(), self.words))[0]
 
     @staticmethod
     def __load_words(language: str) -> List[str]:
@@ -26,10 +24,15 @@ class Board:
             return words[:25]
 
     def __create_board(self, language_code: str, red_goes_first: bool) -> None:
-        self.words = self.__load_words(language_code)
-        self.red = self.words[:9 if red_goes_first else 8]
-        self.blue = self.words[9 if red_goes_first else 8:17]
-        self.neutral = self.words[17:24]
-        self.murderer = [self.words[-1]]
-        self.selected_words = []
+        words = self.__load_words(language_code)
+        red = words[:9 if red_goes_first else 8]
+        blue = words[9 if red_goes_first else 8:17]
+        neutral = words[17:24]
+        murderer = [words[-1]]
+        self.words = [*Board.__initialize_words(red, 'red'), *Board.__initialize_words(
+            blue, 'blue'), *Board.__initialize_words(neutral, 'neutral'), *Board.__initialize_words(murderer, 'murderer'), ]
         random.shuffle(self.words)
+
+    @staticmethod
+    def __initialize_words(words, team):
+        return list(map(lambda word: {'word': word, 'team': team, 'is_selected': False}, words))

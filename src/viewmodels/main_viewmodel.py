@@ -8,15 +8,17 @@ from models import CodenameModel
 class MainViewmodel(ViewmodelBase):
 
     words: List[str]
+    model: CodenameModel
     update: Callable
 
     def __init__(self, model: CodenameModel) -> None:
         super().__init__(model)
+        self.model = model
         self.words = model.board.words
 
     def bind_update(self, update):
         self.update = update
 
     def on_select_word(self, word: str):
-        print(word)
+        self.model.board.get_word(word)['is_selected'] = True
         self.update()
