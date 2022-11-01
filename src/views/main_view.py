@@ -1,12 +1,12 @@
 from dataclasses import dataclass
 from tkinter import *
-from turtle import width
+from turtle import bgcolor, width
 
 from viewmodels import MainViewmodel
 
 from .base import (ViewBase, RoundedButton, center_window,
                    get_word_background_color, get_word_foreground_color,
-                   BACKGROUND_COLOR)
+                   BACKGROUND_COLOR, FORM_BG, FORM_BG_ACCENT_COLOR, FORM_LABEL_FG)
 
 
 @dataclass
@@ -22,6 +22,7 @@ class MainView(ViewBase):
         self.rows = self.viewmodel.model.rows
         self.columns = self.viewmodel.model.columns
         self.window = Tk()
+
         self.__initialize_window()
         self.update()
         self.viewmodel.bind_update(self.update)
@@ -33,11 +34,35 @@ class MainView(ViewBase):
         height = (self.CELL_HEIGHT + self.CELL_PADDING*3)*self.rows
         self.window.geometry(
             f"{width}x{height + 100}")
-        #self.window.resizable(False, False)
+        self.window.resizable(False, False)
         self.board_frame = Frame(
             self.window, width=width, height=height, bg=BACKGROUND_COLOR)
         self.board_frame.grid(row=0, column=0)
+        form = Frame(
+            self.window, width=width, height=100, bg=FORM_BG)
+        form.grid(row=1, column=0, sticky='ns')
+
+        line = Frame(
+            form, width=width, height=10, bg=FORM_BG_ACCENT_COLOR)
+        self.entry = Entry(form)
+        self.label = Label(form, text="Insert a clue:".upper(),
+                           bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        line.grid(row=0, column=0,)
+        self.label.grid(row=1, column=0, padx=self.CELL_PADDING*2,
+                        pady=self.CELL_PADDING, sticky='w')
+        self.entry.grid(row=2, column=0, padx=self.CELL_PADDING*2,
+                        pady=self.CELL_PADDING*2, sticky='w')
+        Frame(
+            form, width=width, height=50, bg=FORM_BG_ACCENT_COLOR).grid(row=3, column=0,)
+        self.entry.bind('<Return>', self.on_entry_input)
+
+        # Marcador
+
         center_window(self.window)
+
+    def on_entry_input(self, _):
+        print(self.entry.get())
+        self.entry.delete(0, 'end')
 
     def update(self):
         self.__clear_board()
