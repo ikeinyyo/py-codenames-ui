@@ -44,19 +44,39 @@ class MainView(ViewBase):
 
         line = Frame(
             form, width=width, height=10, bg=FORM_BG_ACCENT_COLOR)
-        self.entry = Entry(form)
-        self.label = Label(form, text="Insert a clue:".upper(),
+
+        form_controls = Frame(form, width=width/2, bg=FORM_BG)
+        form_controls.grid(row=1, column=0, sticky='we')
+
+        marker = Frame(form, bg='#222')
+        marker.grid(row=1, column=1, sticky='we')
+
+        self.entry = Entry(form_controls)
+        self.label = Label(form_controls, text="Insert a clue:".upper(),
                            bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
-        line.grid(row=0, column=0,)
+        line.grid(row=0, column=0, columnspan=2)
         self.label.grid(row=1, column=0, padx=self.CELL_PADDING*2,
                         pady=self.CELL_PADDING, sticky='w')
         self.entry.grid(row=2, column=0, padx=self.CELL_PADDING*2,
                         pady=self.CELL_PADDING*2, sticky='w')
+
         Frame(
-            form, width=width, height=50, bg=FORM_BG_ACCENT_COLOR).grid(row=3, column=0,)
+            form, width=width, height=50, bg=FORM_BG_ACCENT_COLOR).grid(row=3, column=0, columnspan=2)
         self.entry.bind('<Return>', self.on_entry_input)
 
         # Marcador
+        self.red_label = Label(marker, text="9".upper(),
+                               bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        self.red_label.grid(column=0, row=0, sticky='w')
+        self.blue_label = Label(marker, text="8".upper(),
+                                bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        self.blue_label.grid(column=1, row=0, sticky='w')
+        self.neutral_label = Label(marker, text="7".upper(),
+                                   bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        self.neutral_label.grid(column=2, row=0, sticky='w')
+        self.murderer_label = Label(marker, text="1".upper(),
+                                    bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        self.murderer_label.grid(column=3, row=0, sticky='w')
 
         center_window(self.window)
 
@@ -87,6 +107,14 @@ class MainView(ViewBase):
                                        fg=get_word_foreground_color(self.viewmodel.show_answers, word))
                 button.grid(row=row, column=column, padx=self.CELL_PADDING,
                             pady=self.CELL_PADDING)
+        self.red_label.config(text=len(list(filter(
+            lambda word: word['team'] == 'red' and not word['is_selected'], self.viewmodel.words))))
+        self.blue_label.config(text=len(list(filter(
+            lambda word: word['team'] == 'blue' and not word['is_selected'], self.viewmodel.words))))
+        self.neutral_label.config(text=len(list(filter(
+            lambda word: word['team'] == 'neutral' and not word['is_selected'], self.viewmodel.words))))
+        self.murderer_label.config(text=len(list(filter(
+            lambda word: word['team'] == 'murderer' and not word['is_selected'], self.viewmodel.words))))
 
     def run(self):
         self.window.mainloop()
