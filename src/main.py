@@ -4,7 +4,7 @@ from viewmodels import MainViewmodel
 
 
 def main():
-    model = CodenameModel('es', 7, 6)
+    model = CodenameModel('es', 5, 5)
     viewmodel = MainViewmodel(model)
     view = MainView(viewmodel)
 

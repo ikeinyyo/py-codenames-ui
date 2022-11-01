@@ -25,9 +25,12 @@ class Board:
 
     def __create_board(self, language_code: str, red_goes_first: bool, rows: int, columns: int) -> None:
         words = self.__load_words(language_code, rows, columns)
-        red = words[:9 if red_goes_first else 8]
-        blue = words[9 if red_goes_first else 8:17]
-        neutral = words[17:-1]
+        # calculate the ratio using 5x5 game
+        num_words = int(8/25 * rows*columns)
+        red = words[:num_words+1 if red_goes_first else num_words]
+        blue = words[num_words +
+                     1 if red_goes_first else num_words:num_words+num_words+1]
+        neutral = words[num_words+num_words+1:-1]
         murderer = [words[-1]]
         self.words = [*Board.__initialize_words(red, 'red'), *Board.__initialize_words(
             blue, 'blue'), *Board.__initialize_words(neutral, 'neutral'), *Board.__initialize_words(murderer, 'murderer'), ]

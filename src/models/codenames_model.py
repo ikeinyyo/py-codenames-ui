@@ -11,7 +11,7 @@ class CodenameModel(ModelBase):
     rows: int
     columns: int
 
-    def __init__(self, language_code, rows, columns) -> None:
+    def __init__(self, language_code, rows=5, columns=5) -> None:
         self.rows = rows
         self.columns = columns
         red_goes_first = random.choice([True, False])
