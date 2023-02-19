@@ -51,18 +51,11 @@ class MainView(ViewBase):
         marker = Frame(form, bg='#222')
         marker.grid(row=1, column=1, sticky='we')
 
-        self.entry = Entry(form_controls)
-        self.label = Label(form_controls, text="Insert a clue:".upper(),
-                           bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
-        line.grid(row=0, column=0, columnspan=2)
-        self.label.grid(row=1, column=0, padx=self.CELL_PADDING*2,
-                        pady=self.CELL_PADDING, sticky='w')
-        self.entry.grid(row=2, column=0, padx=self.CELL_PADDING*2,
-                        pady=self.CELL_PADDING*2, sticky='w')
-
-        Frame(
-            form, width=width, height=50, bg=FORM_BG_ACCENT_COLOR).grid(row=3, column=0, columnspan=2)
-        self.entry.bind('<Return>', self.on_entry_input)
+        if self.viewmodel.is_running:
+            if self.viewmodel.show_clue:
+                self.show_clue(form, line, form_controls, width)
+            else:
+                self.request_clue(form, line, form_controls, width)
 
         # Marcador
         self.red_label = Label(marker, text="9".upper(),
@@ -80,11 +73,40 @@ class MainView(ViewBase):
 
         center_window(self.window)
 
+    def request_clue(self, form, line, form_controls, width):
+        self.entry = Entry(form_controls)
+        self.label = Label(form_controls, text="Insert a clue:".upper(),
+                           bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        line.grid(row=0, column=0, columnspan=2)
+        self.label.grid(row=1, column=0, padx=self.CELL_PADDING*2,
+                        pady=self.CELL_PADDING, sticky='w')
+        self.entry.grid(row=2, column=0, padx=self.CELL_PADDING*2,
+                        pady=self.CELL_PADDING*2, sticky='w')
+
+        Frame(
+            form, width=width, height=50, bg=FORM_BG_ACCENT_COLOR).grid(row=3, column=0, columnspan=2)
+        self.entry.bind('<Return>', self.on_entry_input)
+
+    def show_clue(self, form, line, form_controls, width):
+        self.clue_label = Label(form_controls, text=f"{self.viewmodel.model.current_clue.upper()} {self.viewmodel.model.clue_count}",
+                                bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        self.label = Label(form_controls, text="Current clue:".upper(),
+                           bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
+        line.grid(row=0, column=0, columnspan=2)
+        self.label.grid(row=1, column=0, padx=self.CELL_PADDING*2,
+                        pady=self.CELL_PADDING, sticky='w')
+        self.clue_label.grid(row=2, column=0, padx=self.CELL_PADDING*2,
+                             pady=self.CELL_PADDING*2, sticky='w')
+        Frame(
+            form, width=width, height=50, bg=FORM_BG_ACCENT_COLOR).grid(row=3, column=0, columnspan=2)
+
     def on_entry_input(self, _):
-        print(self.entry.get())
+        clue = self.entry.get()
+        self.viewmodel.set_clue(clue)
         self.entry.delete(0, 'end')
 
     def update(self):
+        self.__initialize_window()
         self.__clear_board()
         self.__show_board()
 
