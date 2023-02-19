@@ -26,7 +26,7 @@ class Board:
     def __create_board(self, language_code: str, red_goes_first: bool, rows: int, columns: int) -> None:
         words = self.__load_words(language_code, rows, columns)
         # calculate the ratio using 5x5 game
-        num_words = int(8/25 * rows*columns)
+        num_words = int(8/25 * rows * columns)
         red = words[:num_words+1 if red_goes_first else num_words]
         blue = words[num_words +
                      1 if red_goes_first else num_words:num_words+num_words+1]
