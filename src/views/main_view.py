@@ -5,7 +5,7 @@ from turtle import bgcolor, width
 from viewmodels import MainViewmodel
 
 from .base import (ViewBase, RoundedButton, center_window,
-                   get_word_background_color, get_word_foreground_color,
+                   get_word_background_color, get_word_foreground_color, get_color_by_team,
                    BACKGROUND_COLOR, FORM_BG, FORM_BG_ACCENT_COLOR, FORM_LABEL_FG)
 
 
@@ -48,7 +48,7 @@ class MainView(ViewBase):
         form_controls = Frame(form, width=width/2, bg=FORM_BG)
         form_controls.grid(row=1, column=0, sticky='we')
 
-        marker = Frame(form, bg='#222')
+        marker = Frame(form, bg=FORM_BG_ACCENT_COLOR)
         marker.grid(row=1, column=1, sticky='we')
 
         if self.viewmodel.is_running:
@@ -58,18 +58,17 @@ class MainView(ViewBase):
                 self.request_clue(form, line, form_controls, width)
 
         # Marcador
-        self.red_label = Label(marker, text="9".upper(),
-                               bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
-        self.red_label.grid(column=0, row=0, sticky='w')
-        self.blue_label = Label(marker, text="8".upper(),
-                                bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
-        self.blue_label.grid(column=1, row=0, sticky='w')
-        self.neutral_label = Label(marker, text="7".upper(),
-                                   bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
-        self.neutral_label.grid(column=2, row=0, sticky='w')
-        self.murderer_label = Label(marker, text="1".upper(),
-                                    bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 18))
-        self.murderer_label.grid(column=3, row=0, sticky='w')
+        self.red_label = Label(marker, text="9".upper(), pady=4, width=3,
+                               bg=get_color_by_team('red'), fg=FORM_LABEL_FG, font=('Arial', 24))
+        self.red_label.grid(column=0, row=0, sticky='w',
+                            padx=8, pady=4)
+        self.blue_label = Label(marker, text="8".upper(), pady=4, width=3,
+                                bg=get_color_by_team('blue'), fg=FORM_LABEL_FG, font=('Arial', 24))
+        self.blue_label.grid(column=1, row=0, sticky='w',
+                             padx=8, pady=4)
+        self.current_team_label = Label(marker, text="YOUR TURN".upper(), pady=4,
+                                        bg=FORM_BG, fg=FORM_LABEL_FG, font=('Arial', 24))
+        self.current_team_label.grid(column=2, row=0, sticky='w', padx=8)
 
         center_window(self.window)
 
@@ -133,10 +132,8 @@ class MainView(ViewBase):
             lambda word: word['team'] == 'red' and not word['is_selected'], self.viewmodel.words))))
         self.blue_label.config(text=len(list(filter(
             lambda word: word['team'] == 'blue' and not word['is_selected'], self.viewmodel.words))))
-        self.neutral_label.config(text=len(list(filter(
-            lambda word: word['team'] == 'neutral' and not word['is_selected'], self.viewmodel.words))))
-        self.murderer_label.config(text=len(list(filter(
-            lambda word: word['team'] == 'murderer' and not word['is_selected'], self.viewmodel.words))))
+        self.current_team_label.config(bg=get_color_by_team(
+            'red' if self.viewmodel.is_red_turn else 'blue'))
 
     def run(self):
         self.window.mainloop()

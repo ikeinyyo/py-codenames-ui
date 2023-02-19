@@ -23,6 +23,13 @@ FORM_BG_ACCENT_COLOR = '#430027'
 FORM_LABEL_FG = '#fff'
 
 
+def get_color_by_team(team):
+    return {
+        'red': IS_SELECTED_BG_RED,
+        'blue': IS_SELECTED_BG_BLUE,
+    }.get(team)
+
+
 def get_word_background_color(show_answers, word):
     if word['is_selected']:
         return {

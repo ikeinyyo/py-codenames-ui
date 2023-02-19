@@ -2,20 +2,10 @@ from dataclasses import dataclass
 from typing import List, Callable
 from .base import ViewmodelBase
 from models import CodenameModel
-from enum import Enum
 
 
 @dataclass
 class MainViewmodel(ViewmodelBase):
-    class States(Enum):
-        ANSWER = "ANSWER"
-        CLUE = "CLUE"
-        CREATE_LOG = "CREATE_LOG"
-        CHANGE_TEAM = "CHANGE_TEAM"
-        WIN = "WIN"
-        LOSE = "LOSE"
-        FINISH = "FINISH"
-
     words: List[str]
     model: CodenameModel
     update: Callable
