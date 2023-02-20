@@ -15,6 +15,10 @@ class Board:
     def get_word(self, word):
         return list(filter(lambda board_word: board_word['word'].lower() == word.lower(), self.words))[0]
 
+    def get_count_words_by_team(self, team):
+        return len(list(filter(
+            lambda word: word['team'] == team and not word['is_selected'], self.words)))
+
     @staticmethod
     def __load_words(language: str, rows: int, columns: int) -> List[str]:
         file_name = f"{os.path.dirname(__file__)}/data/{language}.words.json"
@@ -33,7 +37,7 @@ class Board:
         neutral = words[num_words+num_words+1:-1]
         murderer = [words[-1]]
         self.words = [*Board.__initialize_words(red, 'red'), *Board.__initialize_words(
-            blue, 'blue'), *Board.__initialize_words(neutral, 'neutral'), *Board.__initialize_words(murderer, 'murderer'), ]
+            blue, 'blue'), *Board.__initialize_words(neutral, 'neutral'), *Board.__initialize_words(murderer, 'murderer')]
         random.shuffle(self.words)
 
     @staticmethod

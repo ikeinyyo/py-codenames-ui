@@ -56,6 +56,15 @@ class MainView(ViewBase):
                 self.show_clue(form, line, form_controls, width)
             else:
                 self.request_clue(form, line, form_controls, width)
+        else:
+            veil = Frame(
+                self.window, width=width, bg=BACKGROUND_COLOR)
+            veil.grid(row=1, column=0, sticky='wens')
+            endgame_message = Label(veil, text=f"{'RED' if self.viewmodel.is_red_turn else 'BLUE'} WINS".upper(),
+                                    bg=BACKGROUND_COLOR, fg=FORM_LABEL_FG, font=('Arial', 24))
+            endgame_message.grid(row=1, column=1)
+            veil.grid_rowconfigure(1, weight=1)
+            veil.grid_columnconfigure(1, weight=1)
 
         # Marcador
         self.red_label = Label(marker, text="9".upper(), pady=4, width=3,
@@ -122,16 +131,18 @@ class MainView(ViewBase):
                 word = self.viewmodel.words[row*self.columns+column]
                 button = RoundedButton(self.board_frame, width=self.CELL_WIDTH, height=self.CELL_HEIGHT,
                                        text=word['word'].upper(), border_radius=10,
+                                       font=("Arial", 25 if len(
+                                           word['word']) < 10 else 21),
                                        command=self.on_word_click,
                                        bg=get_word_background_color(self.viewmodel.show_answers,
                                                                     word),
                                        fg=get_word_foreground_color(self.viewmodel.show_answers, word))
                 button.grid(row=row, column=column, padx=self.CELL_PADDING,
                             pady=self.CELL_PADDING)
-        self.red_label.config(text=len(list(filter(
-            lambda word: word['team'] == 'red' and not word['is_selected'], self.viewmodel.words))))
-        self.blue_label.config(text=len(list(filter(
-            lambda word: word['team'] == 'blue' and not word['is_selected'], self.viewmodel.words))))
+        self.red_label.config(
+            text=self.viewmodel.model.board.get_count_words_by_team('red'))
+        self.blue_label.config(
+            text=self.viewmodel.model.board.get_count_words_by_team('blue'))
         self.current_team_label.config(bg=get_color_by_team(
             'red' if self.viewmodel.is_red_turn else 'blue'))
 
