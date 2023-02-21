@@ -52,12 +52,6 @@ class MainViewmodel(ViewmodelBase):
         self.set_request_clue()
 
     def correct_answer(self):
-        print("Correct answer", self.model.board.get_count_words_by_team(
-            'red'), self.model.board.get_count_words_by_team('blue'))
-        if self.model.board.get_count_words_by_team('red') == 0 or self.model.board.get_count_words_by_team('blue') == 0:
-            self.end_game()
-            return
-
         if self.model.clue_count <= 0:
             self.change_team()
         else:
@@ -67,6 +61,9 @@ class MainViewmodel(ViewmodelBase):
         self.is_running = False
         if murderer:
             self.is_red_turn = not self.is_red_turn
+        else:
+            self.is_red_turn == self.model.board.get_count_words_by_team(
+                'red') == 0
 
     def check_answer(self, answer):
         word = self.model.board.get_word(answer)
@@ -76,3 +73,8 @@ class MainViewmodel(ViewmodelBase):
             self.end_game(murderer=True)
         else:
             self.change_team()
+        self.check_end_game()
+
+    def check_end_game(self):
+        if self.model.board.get_count_words_by_team('red') == 0 or self.model.board.get_count_words_by_team('blue') == 0:
+            self.end_game()
